@@ -34,6 +34,7 @@ public class TransferAmountController {
     public void setID(String id) throws SQLException {
 		this.id = id;
 	}
+    // After user input the amount, continue to choose account
     @FXML
 	public void continueAction(ActionEvent event) throws SQLException, IOException {
     	connection = DBConnect.getConnect();
@@ -48,6 +49,7 @@ public class TransferAmountController {
         double transferAmount = Double.parseDouble(amountStr);
         double balance = acc.getBalance();
         boolean done = false;
+        // Check balance if the user has enough money to transfer
 		if (transferAmount > balance) { // Display message
 			messageLabel.setText("Not enough funds in your account!");
 		} else { // Valid amount
@@ -70,7 +72,7 @@ public class TransferAmountController {
 	        resultSet.close();   
     	}
     }
-    
+    // Cancel transfer, go to main menu
 	@FXML
 	public void cancelAction(ActionEvent event) throws SQLException, IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
@@ -164,7 +166,7 @@ public class TransferAmountController {
 		currentAmount = "";
 		setLabel();
 	}
-	// Set the money label every time the money change
+	// Set the money formatted label every time the money change
 	public void setLabel() {
 		int len = currentAmount.length();
 		if (len == 0) moneyLabel.setText("$0.00");

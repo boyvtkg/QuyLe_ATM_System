@@ -25,6 +25,7 @@ public class TransferAccountChooserCtrller {
 	private String id;
 	private String saving_id;
 	private String credit_id;
+	// These 4 variables for receipt
 	private String date;
 	private	String transType = "Transfer";
 	private String amount;
@@ -33,7 +34,7 @@ public class TransferAccountChooserCtrller {
 	private Button savingBtn;
 	@FXML
 	private Button creditBtn;
-	public void setInfor(String id, double totalAmount) throws SQLException {
+	public void setInfor(String id, double totalAmount) throws SQLException { // For receipt
 		this.id = id;
 		this.totalAmount = totalAmount;
 		String lastAccDigit = id.substring(id.length() - 1);
@@ -47,11 +48,11 @@ public class TransferAccountChooserCtrller {
     Connection connection = null ;
     PreparedStatement preparedStatement = null ;
     ResultSet resultSet = null ;
-    
+    // When user choose saving account to transfer
 	@FXML
 	private void savingAction(ActionEvent event) throws SQLException, IOException {
 		connection = DBConnect.getConnect();
-		makeTransfer("Saving");
+		makeTransfer("Saving"); // Call transfer function
         // Go to PrintReceipt interface
         FXMLLoader loader = new FXMLLoader(getClass().getResource("PrintReceipt.fxml"));
         Parent root = loader.load(); 
@@ -64,10 +65,11 @@ public class TransferAccountChooserCtrller {
 		stage.setScene(scene);
 		stage.show();
 	}
+	// When user choose credit account to transfer
 	@FXML
 	private void creditAction(ActionEvent event) throws SQLException, IOException {
 		connection = DBConnect.getConnect();
-		makeTransfer("Credit");
+		makeTransfer("Credit"); // Call transfer function
         // Go to PrintReceipt interface
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("PrintReceipt.fxml"));
         Parent root = loader.load(); 
@@ -80,6 +82,7 @@ public class TransferAccountChooserCtrller {
 		stage.setScene(scene);
 		stage.show();
 	}
+	// Helper method to make transfer
 	public void makeTransfer(String destAccType) throws SQLException {
 		System.out.println(id);
 		// Search the acc with accID, store main acc in an instance
@@ -136,6 +139,7 @@ public class TransferAccountChooserCtrller {
         this.amount = String.format("$%.2f", totalAmount);
         this.balance = String.format("$%.2f", main_acc.getBalance());
 	}
+	// Helper method to save transfer records
 	public void transactionRecord(String newMainBalance, String newDestBalance, String destAccType) throws SQLException {
 		// Record of main acc
     	query = "INSERT INTO `transaction`(`trans_date`, `trans_type`, `amount`, `history`, `checking_id`) VALUES (?,?,?,?,?)";
@@ -177,7 +181,7 @@ public class TransferAccountChooserCtrller {
         preparedStatement.executeUpdate();
         
     }
-	
+	// Cancel transfer, go to main menu
 	@FXML
 	public void cancelAction(ActionEvent event) throws SQLException, IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));

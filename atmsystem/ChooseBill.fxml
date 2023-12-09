@@ -125,7 +125,7 @@
                         <Font name="Andale Mono" size="30.0" />
                      </font>
                   </Label>
-                  <Button minHeight="30.0" minWidth="130.0" mnemonicParsing="false" style="-fx-border-color: white; -fx-background-color: transparent;" text="Reset">
+                  <Button minHeight="30.0" minWidth="130.0" mnemonicParsing="false" onAction="#resetAction" style="-fx-border-color: white; -fx-background-color: transparent;" text="Reset">
                      <font>
                         <Font size="18.0" />
                      </font>

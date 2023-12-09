@@ -76,7 +76,7 @@ public class ChooseBillController {
 	Button hundredMinus;
 	@FXML
 	Button continueBtn;
-	
+	// Go back to main menu
 	@FXML
 	public void cancelAction(ActionEvent event) throws SQLException, IOException {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
@@ -99,7 +99,7 @@ public class ChooseBillController {
     	mainMenuController.displayName(firstName);
     	mainMenuController.setID(id); 
     	
-    	// check if card is credit
+    	// check if card is credit, change the UI to Credit UI
     	if (Integer.valueOf(id) > 200 && Integer.valueOf(id) < 300) {
     		mainMenuController.changeToCreditInterface();
     	}
@@ -109,13 +109,13 @@ public class ChooseBillController {
 		stage.setScene(scene);
 		stage.show();
 	}
-	
+	// When done choosing bills, withdraw money here
 	@FXML
 	public void continueAction(ActionEvent event) throws SQLException, IOException {
 		double withdrawAmount = totalAmount;
 		String amountStr = String.format("%.2f", withdrawAmount);	
 		connection = DBConnect.getConnect();
-		// Get balance
+		// Select the account, store in an instance
 		query = "SELECT * FROM atm.checking_account WHERE `acc_id` = " + id;
         preparedStatement = connection.prepareStatement(query);
         resultSet = preparedStatement.executeQuery();
@@ -129,14 +129,15 @@ public class ChooseBillController {
         if (idInt > 100 && idInt < 200) debit = true;
         else if (idInt > 200 && idInt < 300) credit = true;
 
-        // Update balance
+        // Withdraw
         if (debit) acc.withdraw(withdrawAmount);
         else if (credit) acc.getCash(withdrawAmount);
+        // Update new balance to database
         String newBalanceStr = String.valueOf(acc.getBalance());
     	query = "UPDATE `checking_account` SET `balance`= " + newBalanceStr + "WHERE `acc_id` = " + id;
         preparedStatement = connection.prepareStatement(query);
         preparedStatement.executeUpdate();
-        // Create record of transaction
+        // Create a record of transaction
         query = "INSERT INTO `transaction`(`trans_date`, `trans_type`, `amount`, `history`, `checking_id`) VALUES (?,?,?,?,?)";
         preparedStatement = connection.prepareStatement(query);
         java.sql.Date date = new java.sql.Date(Calendar.getInstance().getTime().getTime());
@@ -174,7 +175,7 @@ public class ChooseBillController {
     		++billID;
     		++i;
     	}
-    	
+    	// Go to interface that asks the user to print receipt
     	FXMLLoader loader = new FXMLLoader(getClass().getResource("PrintReceipt.fxml"));
     	Parent root = loader.load(); 
     	
@@ -193,13 +194,13 @@ public class ChooseBillController {
 	}
 	
 	@FXML
-	public void onePlusAction() {
-		currentAmount += 1;
-		setLabel();
-		billArray[0] = billArray[0] + 1;
-		oneQuantityLabel.setText(String.format("%d", billArray[0]));
-		if (billArray[0] > 0) oneMinus.setDisable(false);
-		setDisablePlus();
+	public void onePlusAction() { // Add a one dollar bill
+		currentAmount += 1; // Add 1 dollar to total money
+		setLabel(); // Update new value for money label
+		billArray[0] = billArray[0] + 1; // Add 1 to one dollar counter
+		oneQuantityLabel.setText(String.format("%d", billArray[0])); // Display new quality of 1 dollar counter
+		if (billArray[0] > 0) oneMinus.setDisable(false); // Enable oneMinusButton when having at least one bill
+		setDisablePlus(); // Always check to disable onePlusButton when the money is full
 	}
 	@FXML
 	public void oneMinusAction() {
@@ -297,6 +298,7 @@ public class ChooseBillController {
 		hundredQuantityLabel.setText(String.valueOf(0));
 		currentAmountLabel.setText("$0");
 		setDisableMinus();
+		setEnablePlus();
 	}
 	// Set money label, set disable continue button, only allow continue when the customer
 	public void setLabel() {
@@ -309,21 +311,21 @@ public class ChooseBillController {
 		}
 	}
 	
-	public void setDisablePlus() {
+	public void setDisablePlus() { // Check one by one to disable Plus Button when the money is full
 		if (currentAmount + 1 > totalAmount) onePlus.setDisable(true);
 		if (currentAmount + 5 > totalAmount) fivePlus.setDisable(true);
 		if (currentAmount + 10 > totalAmount) tenPlus.setDisable(true);
 		if (currentAmount + 20 > totalAmount) twentyPlus.setDisable(true);
 		if (currentAmount + 100 > totalAmount) hundredPlus.setDisable(true);
 	}
-	public void setEnablePlus() {
+	public void setEnablePlus() { // Check one by one to enable Plus Button when it can have enough money to add that bill
 		if (currentAmount + 1 <= totalAmount) onePlus.setDisable(false);
 		if (currentAmount + 5 <= totalAmount) fivePlus.setDisable(false);
 		if (currentAmount + 10 <= totalAmount) tenPlus.setDisable(false);
 		if (currentAmount + 20 <= totalAmount) twentyPlus.setDisable(false);
 		if (currentAmount + 100 <= totalAmount) hundredPlus.setDisable(false);
 	}
-	public void setDisableMinus() {
+	public void setDisableMinus() { // Check one by one to disable Minus Button when that bill is 0
 		if (billArray[0] == 0) oneMinus.setDisable(true);
 		if (billArray[1] == 0) fiveMinus.setDisable(true);
 		if (billArray[2] == 0) tenMinus.setDisable(true);
