@@ -33,8 +33,9 @@ public class MainMenuController
 	private Button depositBtn;
 	
 	private String id;
-	public void setID(String id) throws SQLException {
+	public void setInfor(String id, String firstName) throws SQLException {
 		this.id = id;
+		name.setText(firstName);
 	}
     String query = null;
     Connection connection = null ;
@@ -42,9 +43,6 @@ public class MainMenuController
     ResultSet resultSet = null ;
 	@FXML
 	private Label name;
-	public void displayName(String firstName) {
-		name.setText(firstName);
-	}
 	
 	// for when a credit card is entered
 	public void changeToCreditInterface() {

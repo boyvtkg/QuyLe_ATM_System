@@ -197,11 +197,11 @@ public class TransferAccountChooserCtrller {
     	preparedStatement = connection.prepareStatement("SELECT `full_name` FROM atm.customer WHERE `customer_num` = " + cus_num);
         resultSet = preparedStatement.executeQuery();
         resultSet.next();
-        String fullNameString = resultSet.getString("full_name");
-        String[] fullName = fullNameString.split(" ");
-    	String firstName = fullName[0];
+
     	MainMenuController mainMenuController = loader.getController();
-    	mainMenuController.displayName(firstName);
+    	String fullNameString = resultSet.getString("full_name");
+        String firstName = fullNameString.substring(0, fullNameString.indexOf(' '));
+    	mainMenuController.setInfor(id, firstName);
     	
     	Scene scene = new Scene(root);
     	Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();

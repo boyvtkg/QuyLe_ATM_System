@@ -52,12 +52,13 @@ public class LoginController {
 	        resultSet = preparedStatement.executeQuery();
 	        resultSet.next();
 	        // Get the accID linked to the card
+	        
 	        int acc_id = resultSet.getInt("acc_id");
+	        String accID_Str = String.valueOf(acc_id);
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("MainMenu.fxml")); // Set to pen MainMenu page
 	    	Parent root = loader.load();
 	    	// Send account infor to MainMenu page
 	    	MainMenuController mainMenuController = loader.getController();
-	    	mainMenuController.setID(String.valueOf(acc_id));
 	    	mainMenuController.changeToCreditInterface(); // Credit Interface
 	    	
 		// to add name of account to the main menu page
@@ -70,9 +71,8 @@ public class LoginController {
 	        resultSet = preparedStatement.executeQuery();
 	        resultSet.next();
 	        String fullNameString = resultSet.getString("full_name");
-	        String[] fullName = fullNameString.split(" ");
-	    	String firstName = fullName[0];
-	    	mainMenuController.displayName(firstName);
+            String firstName = fullNameString.substring(0, fullNameString.indexOf(' '));
+        	mainMenuController.setInfor(accID_Str, firstName);
 	    	
 	        Scene scene = new Scene(root);
 	        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();

@@ -92,12 +92,10 @@ public class ChooseBillController {
     	preparedStatement = connection.prepareStatement("SELECT `full_name` FROM atm.customer WHERE `customer_num` = " + cus_num);
         resultSet = preparedStatement.executeQuery();
         resultSet.next();
-        String fullNameString = resultSet.getString("full_name");
-        String[] fullName = fullNameString.split(" ");
-    	String firstName = fullName[0];
     	MainMenuController mainMenuController = loader.getController();
-    	mainMenuController.displayName(firstName);
-    	mainMenuController.setID(id); 
+    	String fullNameString = resultSet.getString("full_name");
+        String firstName = fullNameString.substring(0, fullNameString.indexOf(' '));
+    	mainMenuController.setInfor(id, firstName);
     	
     	// check if card is credit, change the UI to Credit UI
     	if (Integer.valueOf(id) > 200 && Integer.valueOf(id) < 300) {

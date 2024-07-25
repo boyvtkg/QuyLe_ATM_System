@@ -70,10 +70,9 @@ public class PasscodeController {
 			// load MainMenu.fxml
         	FXMLLoader loader = new FXMLLoader(getClass().getResource("MainMenu.fxml")); 
         	Parent root = loader.load();
-
+        	String accID_Str = String.valueOf(resultSet.getInt("acc_id"));
         	// Send account information to MainMenu
         	MainMenuController mainMenuController = loader.getController();
-        	mainMenuController.setID(String.valueOf(resultSet.getInt("acc_id")));
         	
         	preparedStatement = connection.prepareStatement("SELECT `cus_num` FROM atm.checking_account WHERE `acc_id` = " + String.valueOf(resultSet.getInt("acc_id")));
             resultSet = preparedStatement.executeQuery();
@@ -83,9 +82,8 @@ public class PasscodeController {
             resultSet = preparedStatement.executeQuery();
             resultSet.next();
             String fullNameString = resultSet.getString("full_name");
-            String[] fullName = fullNameString.split(" ");
-        	String firstName = fullName[0];
-        	mainMenuController.displayName(firstName); 
+            String firstName = fullNameString.substring(0, fullNameString.indexOf(' '));
+        	mainMenuController.setInfor(accID_Str, firstName);
         	
             Scene scene = new Scene(root);
             Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
